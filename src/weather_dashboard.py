@@ -9,6 +9,27 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class WeatherDashboard:
+    def validate_api_key(self):
+        """Validating the OpenWeather API key by making a test call"""
+        test_url = "http://api.openweathermap.org/data/2.5/weather"
+        test_params = {"q": "London", "appid": self.api_key, "units": "imperial"}
+
+        try:
+            response = requests.get(test_url, params=test_params)
+            if response.status_code == 401:  # Invalid API key
+                print("Invalid OpenWeather API Key. Please check your .env file.")
+                return False
+            elif response.status_code == 200:
+                print("OpenWeather API Key is valid.")
+                return True
+            else:
+                print(f"Unexpected response while validating API key: {response.status_code}")
+                return False
+        except requests.exceptions.RequestException as e:
+            print(f"Error validating API key: {e}")
+            return False
+        
+
     def __init__(self):
         self.api_key = os.getenv('OPENWEATHER_API_KEY')
         self.bucket_name = os.getenv('AWS_BUCKET_NAME')
@@ -69,6 +90,10 @@ class WeatherDashboard:
 
 def main():
     dashboard = WeatherDashboard()
+
+    # Validate the OpenWeather API Key
+    if not dashboard.validate_api_key():
+        return  # Exit if API key is invalid
     
     # Create bucket if needed
     dashboard.create_bucket_if_not_exists()
