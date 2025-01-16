@@ -1,0 +1,3 @@
+[submodule "30days-weather-dashboard"]
+	path = 30days-weather-dashboard
+	url = https://github.com/NoScriptKiddie/30days-weather-dashboard
